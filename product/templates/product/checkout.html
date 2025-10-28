@@ -1,0 +1,22 @@
+{% extends 'product/base.html' %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+
+<div class="card mx-auto shadow-sm" style="max-width: 500px;">
+  <div class="card-body">
+    <h4 class="card-title text-center">Checkout</h4>
+    <hr>
+    <h5>{{ product.name }}</h5>
+    <p>{{ product.description }}</p>
+    <h6 class="text-success fw-bold mb-4">Price: ${{ product.price }}</h6>
+
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-success w-100">
+        <i class="fa-solid fa-credit-card me-2"></i> Proceed to Payment
+      </button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

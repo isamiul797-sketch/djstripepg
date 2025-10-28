@@ -1,0 +1,28 @@
+{% extends 'product/base.html' %}
+{% block title %}All Products{% endblock %}
+{% block content %}
+
+<h2 class="text-center mb-4"> Available Products</h2>
+
+<div class="row">
+  {% for product in products %}
+  <div class="col-md-4 mb-4">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">{{ product.name }}</h5>
+        <p class="card-text text-muted">{{ product.description|truncatechars:80 }}</p>
+        <h6 class="fw-bold">${{ product.price }}</h6>
+      </div>
+      <div class="card-footer bg-transparent border-0">
+        <a href="{% url 'checkout' product.id %}" class="btn btn-primary w-100">
+          Buy Now
+        </a>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <p class="text-center">No products available right now.</p>
+  {% endfor %}
+</div>
+
+{% endblock %}
