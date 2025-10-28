@@ -10,11 +10,9 @@
     <p>{{ product.description }}</p>
     <h6 class="text-success fw-bold mb-4">Price: ${{ product.price }}</h6>
 
-    <form method="post">
+    <form method="post" action="/create_payment/{{product.id}}/">
       {% csrf_token %}
-      <button type="submit" class="btn btn-success w-100">
-        <i class="fa-solid fa-credit-card me-2"></i> Proceed to Payment
-      </button>
+      <button type="submit" class="btn btn-success w-100">Pay now</button>
     </form>
   </div>
 </div>

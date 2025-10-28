@@ -6,8 +6,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from product.models import Product,Order
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+import stripe
 
 # Create your views here.
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 class ProductListView(View):
     def get(self,request):
@@ -24,3 +28,35 @@ def success(request):
 
 def cancel(request):
     return JsonResponse({'status':'cancel'})
+
+
+@method_decorator(csrf_exempt,name='dispatch')
+class CreatePaymentView(LoginRequiredMixin, View):
+    def post(self , request, product_id):
+        product = get_object_or_404(Product, id=product_id)
+        order = Order.objects.create(
+            user=request.user,
+            product=product,
+            amount=product.price
+        )
+
+        checkout_session = stripe.checkout.Session.create(
+            line_items=[
+                {
+                    'price_data':{
+                        'currency':'usd',
+                        'unit_amount': int(product.price * 100),
+                        'product_data':{
+                            'name':product.name
+                        }
+                    },
+                    "quantity":1,
+                },],
+            mode='payment',
+            customer_email=request.user.email,
+            success_url= 'http://localhost:8000/success/',
+            cancel_url= 'http://localhost:8000//cancel/',
+        )
+        order.stripe_checkout_session_id = checkout_session.id
+        order.save()
+        return redirect(checkout_session.url)
