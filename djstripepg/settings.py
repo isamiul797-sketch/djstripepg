@@ -112,3 +112,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 from decouple import config
 STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
+STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
