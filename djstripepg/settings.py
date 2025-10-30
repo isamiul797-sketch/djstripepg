@@ -13,7 +13,7 @@ SECRET_KEY = 'django-insecure-m#_oh^j#qyqcy)g!#c8)vk^0)u^56(!j3a)k9k9hj&b5v*ssu-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -112,4 +112,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 from decouple import config
 STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
+
+STRIPE_WEBHOOK_SECRET = config('STRIPE_WEBHOOK_SECRET')
+
 STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://nonbookish-eleni-supersagacious.ngrok-free.dev"
+]
+

@@ -60,3 +60,25 @@ class CreatePaymentView(LoginRequiredMixin, View):
         order.stripe_checkout_session_id = checkout_session.id
         order.save()
         return redirect(checkout_session.url)
+
+@method_decorator(csrf_exempt,name='dispatch')
+class StripeWebhookView(View):
+    def post(self, request):
+        payload = request.body
+        sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+        endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
+        try:
+            event = stripe.Webhook.construct_event(payload,sig_header,endpoint_secret)
+        except ValueError as e:
+            return JsonResponse({'error':str(e)}, status=400)
+        except stripe.error.SignatureVerificationError as e :
+            return JsonResponse({'error':str(e)}, status=400)
+        
+        #Handle successfull payment
+        if event['type'] == 'checkout.session.completed':
+            session = event['data']['object']
+            order = Order.objects.get(stripe_checkout_session_id=session['id'])
+            order.is_paid = True
+            order.save()
+            return JsonResponse({'status':'success'})
+        return JsonResponse({'status':'unhandled_event'})
